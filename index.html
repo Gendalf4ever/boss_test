@@ -1,29 +1,25 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wolf AR Project</title>
+    <title>ichwillnicht</title>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-babylon.prod.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
     <style>
-        body, html { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; }
-        #renderCanvas { width: 100%; height: 100%; display: block; }
-        /* Сообщение для пользователя */
-        #instructions {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: white; text-align: center; font-family: sans-serif;
+        body { margin: 0; overflow: hidden; background-color: black; }
+        #container { width: 100vw; height: 100vh; }
+        #startButton { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            padding: 20px; z-index: 10; cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="instructions">Загрузка...</div>
-    <canvas id="renderCanvas"></canvas>
-    <!--iphone camera settings-->
-    <script src="https://unpkg.com/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
-    <script>
-    var polyfill = new WebXRPolyfill();
-    </script>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <button id="startButton">Запустить камеру</button>
+    <div id="container"></div>
+
     <script src="app.js"></script>
 </body>
 </html>
