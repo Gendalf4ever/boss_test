@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>AR</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wolf AR Project</title>
     <style>
-        body, html { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
-        #renderCanvas { width: 100%; height: 100%; touch-action: none; }
+        body, html { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; }
+        #renderCanvas { width: 100%; height: 100%; display: block; }
+        /* Сообщение для пользователя */
+        #instructions {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; text-align: center; font-family: sans-serif;
+        }
     </style>
-    <body>
-    <canvas id = "renderCanvas"></canvas>
+</head>
+<body>
+    <div id="instructions">Загрузка...</div>
+    <canvas id="renderCanvas"></canvas>
+
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
     <script src="app.js"></script>
-        
-        <script src="" async defer></script>
-    </body>
+</body>
 </html>

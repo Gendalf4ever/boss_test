@@ -1,43 +1,55 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
+const instructions = document.getElementById("instructions");
 
-const createScene = async function() {
+const createScene = async function () {
     const scene = new BABYLON.Scene(engine);
     const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = 0.7;
-    const xr = await scene.createDefaultXRExpirienceAsync ({
+    light.intensity = 1.0;
+    const isSupported = await BABYLON.WebXRSessionManager.IsSessionSupportedAsync("immersive-ar");
+    
+    if (!isSupported) {
+        instructions.innerText = "Ваш браузер не поддерживает AR. Используйте Chrome на Android или специальный браузер на iOS.";
+        return scene;
+    }
+
+
+    const xr = await scene.createDefaultXRExperienceAsync({
         uiOptions: {
             sessionMode: "immersive-ar",
             referenceSpaceType: "local-floor"
         }
-    })
+    });
 
-    const featuresManager = xr.baseExpirience.featuresManager;
+    instructions.innerText = "Нажмите на кнопку AR в углу и наведите на QR-код";
 
-  const imageTracking = featuresManager.enableFeature(BABYLON.WebXRFeaturesManager.JS_WEBXR_IMAGE_TRACKING, "latest", {
+    const featuresManager = xr.baseExperience.featuresManager;
+    
+
+    const imageTracking = featuresManager.enableFeature(BABYLON.WebXRFeaturesManager.JS_WEBXR_IMAGE_TRACKING, "latest", {
         images: [
             {
                 src: "marker.png", 
-                estimatedRealWorldWidth: 0.1 // 10 см
+                estimatedRealWorldWidth: 0.1 
             }
         ]
     });
 
-const result = await BABYLON.SceneLoader.ImportMeshAsync("", "./", "model.glb", scene);
-    const wolfModel = result.meshes[0];
-    wolfModel.setEnabled(false); // Скрываем модель, пока маркер не найден
-
-    // Обработка появления маркера
-    imageTracking.onTrackedImageUpdatedObservable.add((image) => {
-        wolfModel.setEnabled(true);
-        
-    
-        image.transformationMatrix.decompose(wolfModel.scaling, wolfModel.rotationQuaternion, wolfModel.position);
-        if (result.animationGroups.length > 0) {
+    // Загрузка модели
+    BABYLON.SceneLoader.ImportMesh("", "./", "model.glb", scene, function (meshes) {
+        const wolf = meshes[0];
+        wolf.setEnabled(false); 
+        imageTracking.onTrackedImageUpdatedObservable.add((image) => {
+            instructions.style.display = "none"; 
+            wolf.setEnabled(true);
             
-            const dance = result.animationGroups.find(ag => ag.name.includes("dance")) || result.animationGroups[0];
-            dance.play(true); // Цикличное воспроизведение
-        }
+            // Позиционирование
+            image.transformationMatrix.decompose(wolf.scaling, wolf.rotationQuaternion, wolf.position);
+            
+            if (scene.animationGroups.length > 0) {
+                scene.animationGroups[0].play(true);
+            }
+        });
     });
 
     return scene;
@@ -49,6 +61,4 @@ createScene().then((scene) => {
     });
 });
 
-window.addEventListener("resize", () => {
-    engine.resize();
-});
+window.addEventListener("resize", () => engine.resize());
