@@ -17,7 +17,11 @@
 <body>
     <div id="instructions">Загрузка...</div>
     <canvas id="renderCanvas"></canvas>
-
+    <!--iphone camera settings-->
+    <script src="https://unpkg.com/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
+    <script>
+    var polyfill = new WebXRPolyfill();
+    </script>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
     <script src="app.js"></script>
