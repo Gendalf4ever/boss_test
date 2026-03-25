@@ -1,83 +1,56 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wolf Selector AR</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <title>Ichwillnicht</title>
+
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.2.0/dist/aframe-extras.min.js"></script>
+
     <style>
-        body { margin: 0; background-color: #f0f0f0; font-family: sans-serif; overflow: hidden; }
-        
-        /* Контейнер для просмотрщика */
-        model-viewer { width: 100vw; height: 100vh; background-color: #eee; }
-
-        /* Кнопка запуска AR (внизу по центру) */
-        .ar-button {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            background-color: #007bff; border-radius: 30px; border: none; 
-            color: white; padding: 15px 35px; font-size: 18px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;
+        body { margin: 0; overflow: hidden; }
+        /* Экран загрузки */
+        #loading {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; color: white; display: flex;
+            justify-content: center; align-items: center;
+            font-family: sans-serif; z-index: 999;
         }
-
-        /* Кнопка ПЛЮС (справа внизу) */
-        .fab-plus {
-            position: absolute; bottom: 110px; right: 20px;
-            width: 56px; height: 56px; border-radius: 50%;
-            background-color: #0000ff; color: white; border: none;
-            font-size: 30px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); z-index: 11;
-        }
-
-        /* Простое меню выбора */
-        #modelMenu {
-            display: none; position: absolute; bottom: 180px; right: 20px;
-            background: white; border-radius: 8px; padding: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 12;
-        }
-        .menu-item { display: block; padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; }
-        .menu-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
+    <div id="loading">Загрузка...</div>
 
-    <model-viewer id="wolfViewer"
-        src="model.glb" 
-        ios-src="model.usdz"
-        ar ar-modes="webxr scene-viewer quick-look" 
-        camera-controls 
-        shadow-intensity="1" 
-        autoplay animation-name="*">
+    <a-scene 
+        mindar-image="imageTargetSrc: ./marker.mind; autoStart: true;" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights: true" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
         
-        <button slot="ar-button" class="ar-button"></button>
+        <a-assets>
+            <a-asset-item id="wolfModel" src="./model.glb"></a-asset-item>
+        </a-assets>
 
-        <div slot="progress-bar" style="text-align:center; padding-top: 50px;">Загрузка...</div>
-    </model-viewer>
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <button class="fab-plus" onclick="toggleMenu()">+</button>
-
-    <div id="modelMenu">
-        <div class="menu-item" onclick="changeModel('model.glb', 'model.usdz')">Волк 1 (Обычный)</div>
-        <div class="menu-item" onclick="changeModel('wolf2.glb', 'wolf2.usdz')">Волк 2 (Танцор)</div>
-        <div class="menu-item" onclick="changeModel('wolf3.glb', 'wolf3.usdz')">Волк 3 (Серый)</div>
-    </div>
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-gltf-model 
+                src="#wolfModel" 
+                scale="0.5 0.5 0.5" 
+                position="0 0 0" 
+                rotation="0 0 0"
+                animation-mixer="clip: *; loop: repeat;">
+            </a-gltf-model>
+        </a-entity>
+    </a-scene>
 
     <script>
-        const viewer = document.querySelector("#wolfViewer");
-        const menu = document.querySelector("#modelMenu");
-
-        function toggleMenu() {
-            menu.style.display = (menu.style.display === "block") ? "none" : "block";
-        }
-
-        function changeModel(glbName, usdzName) {
-            // Меняем источники модели
-            viewer.src = glbName;
-            viewer.iosSrc = usdzName;
-            
-            // Скрываем меню после выбора
-            menu.style.display = "none";
-        }
+        // Скрываем загрузочный экран, когда сцена готова
+        document.querySelector('a-scene').addEventListener('arReady', () => {
+            document.getElementById('loading').style.display = 'none';
+        });
     </script>
-
 </body>
 </html>
